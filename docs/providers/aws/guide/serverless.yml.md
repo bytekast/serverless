@@ -75,6 +75,11 @@ provider:
     description: Some Description # Optional description for the API Gateway stage deployment
     binaryMediaTypes: # Optional binary media types the API might return
       - '*/*'
+    requestSchemas:
+      global-model:
+        name: GlobalModel
+        schema: ${file(schema.json)}
+        description: "A global model that can be referenced in functions"
   alb:
     targetGroupPrefix: xxxxxxxxxx # Optional prefix to prepend when generating names for target groups
     authorizers:
@@ -269,6 +274,13 @@ functions:
             identitySource: method.request.header.Authorization
             identityValidationExpression: someRegex
             type: token # token or request. Determines input to the authorizer function, called with the auth token or the entire request event. Defaults to token
+          schema:
+            application/json: ${file(model_schema.json)}
+          requestSchema:
+            application/json:
+                name: ModelName
+                description: "Some description"
+                schema: ${file(model_schema.json)}
       - httpApi: # HTTP API endpoint
           method: GET
           path: /some-get-path/{param}
