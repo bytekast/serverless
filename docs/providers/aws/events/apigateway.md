@@ -742,7 +742,7 @@ functions:
           method: post
           requestSchema:
             application/json:
-              definition: ${file(create_request.json)}
+              schema: ${file(create_request.json)}
               name: PostCreateModel
               description: 'Validation model for Creating Posts'
 ```
