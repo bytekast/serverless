@@ -274,8 +274,6 @@ functions:
             identitySource: method.request.header.Authorization
             identityValidationExpression: someRegex
             type: token # token or request. Determines input to the authorizer function, called with the auth token or the entire request event. Defaults to token
-          schema:
-            application/json: ${file(model_schema.json)}
           requestSchema:
             application/json:
                 name: ModelName
