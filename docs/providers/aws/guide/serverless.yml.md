@@ -81,15 +81,12 @@ provider:
     description: Some Description # Optional description for the API Gateway stage deployment
     binaryMediaTypes: # Optional binary media types the API might return
       - '*/*'
-<<<<<<< HEAD
+    metrics:  false # Optional detailed Cloud Watch Metrics
     requestSchemas:
       global-model:
         name: GlobalModel
         schema: ${file(schema.json)}
         description: "A global model that can be referenced in functions"
-=======
-    metrics:  false # Optional detailed Cloud Watch Metrics
->>>>>>> 77af7f12d3599b80f38407e81241f58ab698fdd5
   alb:
     targetGroupPrefix: xxxxxxxxxx # Optional prefix to prepend when generating names for target groups
     authorizers:
