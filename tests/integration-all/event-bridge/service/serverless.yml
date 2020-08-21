@@ -1,5 +1,7 @@
 service: CHANGE_TO_UNIQUE_PER_RUN
 
+configValidationMode: error
+
 provider:
   name: aws
   runtime: nodejs12.x
@@ -10,6 +12,14 @@ functions:
     handler: core.eventBusDefault
     events:
       - eventBridge:
+          pattern:
+            source:
+              - serverless.test
+  eventBusDefaultArn:
+    handler: core.eventBusDefaultArn
+    events:
+      - eventBridge:
+          eventBus: CHANGE_TO_UNIQUE_PER_RUN
           pattern:
             source:
               - serverless.test

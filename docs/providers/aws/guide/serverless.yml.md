@@ -421,6 +421,14 @@ functions:
           conditions:
             host: example.com
             path: /hello
+          healthCheck: # optional, can also be set using a boolean value
+            path: / # optional
+            intervalSeconds: 35 # optional
+            timeoutSeconds: 30 # optional
+            healthyThresholdCount: 5 # optional
+            unhealthyThresholdCount: 5 # optional
+            matcher: # optional
+              httpCode: '200'
       - eventBridge:
           # using the default AWS event bus
           schedule: rate(10 minutes)
@@ -484,6 +492,8 @@ functions:
             OriginPath: /framework
             CustomOriginConfig:
               OriginProtocolPolicy: match-viewer
+
+configValidationMode: warn # Modes for config validation. `error` throws an exception, `warn` logs error to console, `off` disables validation at all. The default is warn.
 
 layers:
   hello: # A Lambda layer
