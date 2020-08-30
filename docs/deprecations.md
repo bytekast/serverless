@@ -6,6 +6,14 @@ layout: Doc
 
 # Serverless Framework Deprecations
 
+<a name="AWS_EVENT_BRIDGE_CUSTOM_RESOURCE_DEPLOYMENT"><div>&nbsp;</div></a>
+
+## AWS EventBridge lambda event triggers
+
+AWS EventBridge lambda event triggers will be deployed using native CloudFormation instead of a custom resource and associated lambda, this be will be removed in vXXXXX
+
+To use this prior to deprecation set `useNativeCloudFormation: true` in lambda EventBridge trigger definition.
+
 <a name="AWS_FUNCTION_DESTINATIONS_ASYNC_CONFIG"><div>&nbsp;</div></a>
 
 ## AWS Lambda Function Destinations `maximumEventAge` & `maximumRetryAttempts`
