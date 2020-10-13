@@ -10,6 +10,7 @@ module.exports = {
       'always',
       [
         '',
+        'Analytics',
         'AWS ALB',
         'AWS API Gateway',
         'AWS CloudFormation',
@@ -24,6 +25,7 @@ module.exports = {
         'AWS Kinesis',
         'AWS Lambda',
         'AWS Local Invocation',
+        'AWS MSK',
         'AWS S3',
         'AWS Schedule',
         'AWS SNS',
@@ -36,6 +38,7 @@ module.exports = {
         'Dashboard',
         'Packaging',
         'Plugins',
+        'Print',
         'Standalone',
         'Templates',
         'User Config',
