@@ -14,6 +14,14 @@ Starting with v3.0.0 AWS EventBridge lambda event triggers and all associated Ev
 
 To use this prior to deprecation set `useNativeCloudFormation: true` in lambda EventBridge trigger definition. This is a per eventt trigger config property.
 
+<a name="AWS_API_GATEWAY_NAME_STARTING_WITH_SERVICE"><div>&nbsp;</div></a>
+
+## API Gateway naming will be changed to `${service}-${stage}`
+
+Starting with v3.0.0, API Gateway naming will be changed from `${stage}-${service}` to `${service}-${stage}`.
+
+Adapt to this convention now by setting `provider.apiGateway.shouldStartNameWithService` to `true`.
+
 <a name="ALEXA_SKILL_EVENT_WITHOUT_APP_ID"><div>&nbsp;</div></a>
 
 ## Support for `alexaSkill` event without `appId` is to be removed
@@ -30,7 +38,7 @@ Starting with v3.0.0, extensions to nonexistent resources in `resources.extensio
 
 ## Support for `enableLocalInstallationFallback` setting is to be removed
 
-Starting with v3.0.0, framework will unconditionally run service local installation of `serverless` if its found.
+Starting with v3.0.0, framework will unconditionally run service local installation of `serverless` if it's found.
 
 <a name="LOCAL_INSTALLATION_FALLBACK"><div>&nbsp;</div></a>
 
@@ -90,6 +98,6 @@ Please use `bin/serverless.js` instead. `bin/serverless` will be removed with v2
 
 <a name="AWS_KMS_KEY_ARN"><div>&nbsp;</div></a>
 
-## awsKmsKeyArn references
+## `awsKmsKeyArn` references
 
-Plase use `provider.kmsKeyArn` and `functions[].kmsKeyArn`. `service.awsKmsKeyArn` and `functions[].awsKmsKeyArn` will be removed with v3.0.0
+Please use `provider.kmsKeyArn` and `functions[].kmsKeyArn`. `service.awsKmsKeyArn` and `functions[].awsKmsKeyArn` will be removed with v3.0.0
