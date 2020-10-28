@@ -13,6 +13,11 @@ layout: Doc
 Starting with v3.0.0 AWS EventBridge lambda event triggers and all associated EventBridge resouurces will be deployed using native CloudFormation instead of a CustomResource that used a lambda to deploy them via the AWS SDK/API.
 
 To use this prior to deprecation set `useNativeCloudFormation: true` in lambda EventBridge trigger definition. This is a per eventt trigger config property.
+<a name="CLOUDFRONT_CACHE_BEHAVIOR_FORWARDED_VALUES_AND_TTL"><div>&nbsp;</div></a>
+
+## `cloudFront` event `behavior.ForwardedValues` property
+
+[Cloudfront cache behavior `ForwardedValues`, `MinTTL`, `MaxTTL` and `DefaultTTL` fields are deprecated](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-distributionconfig.html). We recommend that you use a cache policy instead of this field. Please follow [cache policy documentation](/framework/docs/providers/aws/events/cloudfront.md) for implementation details.
 
 <a name="AWS_API_GATEWAY_NAME_STARTING_WITH_SERVICE"><div>&nbsp;</div></a>
 
