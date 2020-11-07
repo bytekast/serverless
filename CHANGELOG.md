@@ -2,6 +2,75 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.11.0](https://github.com/serverless/serverless/compare/v2.10.0...v2.11.0) (2020-11-06)
+
+### Features
+
+- **ConfigSchema:** `defineFuntionEventProperties` schema extension method ([#8471](https://github.com/serverless/serverless/issues/8471)) ([b5abfd8](https://github.com/serverless/serverless/commit/b5abfd8554a2641ca92c16db4cdd20c08be4001e)) ([Frédéric Barthelet](https://github.com/fredericbarthelet))
+- Deprecate `service` object notation ([#8466](https://github.com/serverless/serverless/issues/8466)) ([c0a2ecf](https://github.com/serverless/serverless/commit/c0a2ecf453fa82d46bf2fda34708864bc440203d)) ([A. Singh](https://github.com/A-5ingh))
+- **Analytics:**
+  - Distinguish different standalone installations ([#8474](https://github.com/serverless/serverless/issues/8474)) ([5f81f58](https://github.com/serverless/serverless/commit/5f81f58b3af615205fb7b0d92c3828ad723a1595)) ([Mariusz Nowak](https://github.com/medikoo))
+  - Report tabtab autocomplete installations ([#8474](https://github.com/serverless/serverless/issues/8474)) ([04b868f](https://github.com/serverless/serverless/commit/04b868fd3b143c27148e3e1cbbd901c2b19944e1)) ([Mariusz Nowak](https://github.com/medikoo))
+
+### Bug Fixes
+
+- Ensure to inspect configuration after it's fully resolved ([#8482](https://github.com/serverless/serverless/issues/8482)) ([f60fb55](https://github.com/serverless/serverless/commit/f60fb55a0b60603039d92d7467d0b231e247c819)) ([Mariusz Nowak](https://github.com/medikoo))
+- **CLI:** Fix handling of command options in help display ([#8476](https://github.com/serverless/serverless/issues/8476)) ([2fffb16](https://github.com/serverless/serverless/commit/2fffb168bc7f957ed9e8e048fd08dfb9669e8eca)) ([Mariusz Nowak](https://github.com/medikoo))
+- **Standalone:** Recognize Windows as non auto updatable platform ([#8474](https://github.com/serverless/serverless/issues/8474)) ([4fc29a5](https://github.com/serverless/serverless/commit/4fc29a57c4b675b2751c1e17d47e45904653f658)) ([Mariusz Nowak](https://github.com/medikoo))
+
+## [2.10.0](https://github.com/serverless/serverless/compare/v2.9.0...v2.10.0) (2020-11-03)
+
+### Features
+
+- **Config Schema:**
+  - Schema for AWS `s3` event ([#8330](https://github.com/serverless/serverless/issues/8330)) ([61d8ee9](https://github.com/serverless/serverless/commit/61d8ee9884cdee652fae131fed1e753301a351bf)) ([Oz Weiss](https://github.com/thewizarodofoz))
+  - `defineFunctionProperties` schema extension method ([#8462](https://github.com/serverless/serverless/issues/8462)) ([5003bbf](https://github.com/serverless/serverless/commit/5003bbf983e7218c673a94a7042ca118aa0ae431)) ([Luis Helder](https://github.com/luislhl))
+
+### Bug Fixes
+
+- **Config Schema:**
+  - Support empty string as environment variables ([#8468](https://github.com/serverless/serverless/issues/8468)) ([ff9db3e](https://github.com/serverless/serverless/commit/ff9db3e7bd0e4cd1261984e048373afc843eb053)) ([Mariusz Nowak](https://github.com/medikoo))
+  - Ensure schema related config normalization is pursued also with validation turned off ([#8460](https://github.com/serverless/serverless/issues/8460)) ([df1b8a9](https://github.com/serverless/serverless/commit/df1b8a9433615c9c6efdff4dcef1f5477ea46d8a)) ([Mariusz Nowak](https://github.com/medikoo))
+- Support log retention at custom resource lambda log groups ([#8456](https://github.com/serverless/serverless/issues/8456)) ([4ce9037](https://github.com/serverless/serverless/commit/4ce9037f8c8416715204f431af65767b3c48e1c7)) ([Filip Pýrek](https://github.com/FilipPyrek))
+- **Analytics:** Ensure to send payload when having all meta ([#8467](https://github.com/serverless/serverless/issues/8467)) ([03859c0](https://github.com/serverless/serverless/commit/03859c04720f9071d0590b5d0ad1fa0e2c6770b3)) ([Mariusz Nowak](https://github.com/medikoo))
+
+### Maintenance Improvements
+
+- Remove `that = this` pattern ([#8463](https://github.com/serverless/serverless/issues/8463)) ([4ae192c](https://github.com/serverless/serverless/commit/4ae192cbfeb534d09af5b29ef7a1ed3f7700332f)) ([telenord](https://github.com/telenord))
+- **Config Schema:**
+  - Run schema validation only in service context (([#8460](https://github.com/serverless/serverless/issues/8460)) ([c271218](https://github.com/serverless/serverless/commit/c2712183a5dae0726c56456d8b3b790e7c597052)) ([Mariusz Nowak](https://github.com/medikoo))
+  - Ensure config modifications happen after its validation ([#8460](https://github.com/serverless/serverless/issues/8460)) ([214768b](https://github.com/serverless/serverless/commit/214768b83ab14495be75ac87f221a31ffd60c88b)) ([Mariusz Nowak](https://github.com/medikoo))
+- **AWS Alexa:** Ensure to log deprecation at initialization stage ([#8467](https://github.com/serverless/serverless/issues/8467)) ([a5a1a23](https://github.com/serverless/serverless/commit/a5a1a230a5714fc2859773077d57eba6d654af74)) ([Mariusz Nowak](https://github.com/medikoo))
+- **AWS API Gateway:** Ensure to log deprecation at initialization stage ([#8467](https://github.com/serverless/serverless/issues/8467)) ([b6d033a](https://github.com/serverless/serverless/commit/b6d033a044e722f9cd0bd751c4067bf05aa50558)) ([Mariusz Nowak](https://github.com/medikoo))
+- **AWS CloudFront:** Ensure to log deprecation at initialization stage ([#8467](https://github.com/serverless/serverless/issues/8467)) ([61f90a3](https://github.com/serverless/serverless/commit/61f90a362d33425dc10d4c5bd851132ec5779e8e)) ([Mariusz Nowak](https://github.com/medikoo))
+- Ensure to log deprecation at initialization stage ([#8467](https://github.com/serverless/serverless/issues/8467)) ([1b26075](https://github.com/serverless/serverless/commit/1b26075fb51c71dd169c4800822842f614465388)) ([Mariusz Nowak](https://github.com/medikoo))
+
+## [2.9.0](https://github.com/serverless/serverless/compare/v2.8.0...v2.9.0) (2020-10-29)
+
+### Features
+
+- Opt-in auto update feature for global (standalone and npm) installations. Turn on via `sls config --autoupdate` ([#8428](https://github.com/serverless/serverless/issues/8428)) ([e3f4546](https://github.com/serverless/serverless/commit/e3f454680e528e51a61f4e203b5ec72e8947f0b1)) ([Mariusz Nowak](https://github.com/medikoo))
+- **AWS API Gateway:** Improve API Gateway API naming, deprecate `{stage}-{service}` format in favor of `{service}-{stage}` with suggestion to opt-in to new way ([#8339](https://github.com/serverless/serverless/issues/8339)) ([8566135](https://github.com/serverless/serverless/commit/85661353410d53a94c1d04f1a5c86f1fa456b3ff)) ([Fabian Schneider](https://github.com/fabsrc))
+- **AWS CloudFront:** Switch from `ForwardedValues` to cache policies ([#8381](https://github.com/serverless/serverless/issues/8381)) ([479727e](https://github.com/serverless/serverless/commit/479727e1f4363cef1dd2fa1c20bdb9f7f8493838)) ([Frédéric Barthelet](https://github.com/fredericbarthelet))
+- **AWS Deploy:** Update according to shifted CloudFormation limits ([#8433](https://github.com/serverless/serverless/issues/8433)) ([7e9b2ea](https://github.com/serverless/serverless/commit/7e9b2eac74cd9b720ac1aba4e01a31f06476165c)) ([Frédéric Barthelet](https://github.com/fredericbarthelet))
+- **Analytics:**
+  - Distinguish between npm and other global installation types ([#8428](https://github.com/serverless/serverless/issues/8428)) ([7cc898c](https://github.com/serverless/serverless/commit/7cc898cd0f8ed6cdb63664bed10ecfff74827084))([Mariusz Nowak](https://github.com/medikoo))
+  - Report `isAutoUpdateEnabled` ([#8428](https://github.com/serverless/serverless/issues/8428)) ([48a3e11](https://github.com/serverless/serverless/commit/48a3e11f333c4e45a58f6810c1f3137fa953f2b8))([Mariusz Nowak](https://github.com/medikoo))
+
+### Bug Fixes
+
+- **AWS Deploy:** Fix handling of AWS SDK numeric error codes ([#8412](https://github.com/serverless/serverless/issues/8412)) ([6e62e1c](https://github.com/serverless/serverless/commit/6e62e1c5e8f66237e45e83d667e6b50bfb8ea753)) ([Ed Holland](https://github.com/edholland))
+- **Config Schema:**
+  - Ensure to validate `provider` as set in config file ([#8450](https://github.com/serverless/serverless/issues/8450)) ([b04ab55](https://github.com/serverless/serverless/commit/b04ab55fabd193b879244718ed87047ec961904c))([Mariusz Nowak](https://github.com/medikoo))
+  - Fix IAM Policy resource reference schema ([#8453](https://github.com/serverless/serverless/issues/8453)) ([85f823c](https://github.com/serverless/serverless/commit/85f823cf46713b110d0f70892e6130315e1d3972))([Mariusz Nowak](https://github.com/medikoo))
+- **Templates:** Ensure service is renamed also in eventual `package-lock.json` ([#8409](https://github.com/serverless/serverless/issues/8409)) ([78f159b](https://github.com/serverless/serverless/commit/78f159b4326f7eb092895bbd11813e470c146dc4)) ([Mark Tse](https://github.com/neverendingqs))
+
+### Maintenance Improvements
+
+- **Standalone:** Seclude standalone utils ([#8428](https://github.com/serverless/serverless/issues/8428)) ([5fcc54a](https://github.com/serverless/serverless/commit/5fcc54ae2aae9aea40d0fec8d42a86ebd21b5a76))([Mariusz Nowak](https://github.com/medikoo))
+- **`blluebird` removal:**
+  - Replace `BbPromise.props` with `Promise.all` ([#8414](https://github.com/serverless/serverless/issues/8414)) ([2d6824c](https://github.com/serverless/serverless/commit/2d6824cde531ba56758f441b39b5ab018702e866)) ([Piotr Grzesik](https://github.com/pgrzesik))
+
 ## [2.8.0](https://github.com/serverless/serverless/compare/v2.7.0...v2.8.0) (2020-10-16)
 
 ### Features
@@ -221,6 +290,19 @@ All notable changes to this project will be documented in this file. See [standa
 - **AWS ALB:** Remove support for `authorizers[].allowUnauthenticated` ([#8160](https://github.com/serverless/serverless/issues/8160)) ([7c304df](https://github.com/serverless/serverless/commit/7c304df5ffcaaf1dbbd90ccf714f55f4a6cc6a0b)) ([morgan-sam](https://github.com/morgan-sam))
 - **AWS HTTP API:** Drop support for `timeout` setting ([#8184](https://github.com/serverless/serverless/issues/8184)) ([1cfd1f2](https://github.com/serverless/serverless/commit/1cfd1f25a278679d94e4cd30baf1b2092ff83d8a)) ([Mariusz Nowak](https://github.com/medikoo))
 - Replace `mkdrip` with `esnureDir` from `fs-extra` ([#8183](https://github.com/serverless/serverless/issues/8183)) ([1beb8d0](https://github.com/serverless/serverless/commit/1beb8d0246e705d3d724dbd2fb4c6639bc961cba)) ([Mariusz Nowak](https://github.com/medikoo))
+
+## [1.83.1](https://github.com/serverless/serverless/compare/v1.83.0...v1.83.1) (2020-11-03)
+
+### Bug Fixes
+
+- **Analytics:** Ensure to send payload when having all meta ([#8469](https://github.com/serverless/serverless/issues/8469)) ([78dce94](https://github.com/serverless/serverless/commit/78dce94571a05d0021d58352bd21b80f90c62883)) ([Mariusz Nowak](https://github.com/medikoo))
+
+### Maintanance Improvements
+
+- **AWS Lambda:** Ensure to log deprecation at initialization stage ([#8469](https://github.com/serverless/serverless/issues/8469)) ([2e3ce12](https://github.com/serverless/serverless/commit/2e3ce128b0e55abf42e9d07cb96af82f3194d60c)) ([Mariusz Nowak](https://github.com/medikoo))
+- **AWS ALB:** Ensure to log deprecation at initialization stage ([#8469](https://github.com/serverless/serverless/issues/8469)) ([3cf6449](https://github.com/serverless/serverless/commit/3cf6449b78604434a0292513420d2b90faef37ef)) ([Mariusz Nowak](https://github.com/medikoo))
+- **AWS HTTP API:** Ensure to log deprecation at initialization stage ([#8469](https://github.com/serverless/serverless/issues/8469)) ([ecd3084](https://github.com/serverless/serverless/commit/ecd30844fc7a748d0ac56679636741c009b2c630)) ([Mariusz Nowak](https://github.com/medikoo))
+- **Standalone:** Support non-latest version builds ([#8469](https://github.com/serverless/serverless/issues/8469)) ([8727044](https://github.com/serverless/serverless/commit/8727044b959ed1bb989d97f7fa178e8dcf36b5a0)) ([Mariusz Nowak](https://github.com/medikoo))
 
 ## [1.83.0](https://github.com/serverless/serverless/compare/v1.82.0...v1.83.0) (2020-09-10)
 
