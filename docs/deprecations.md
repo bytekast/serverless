@@ -10,9 +10,9 @@ layout: Doc
 
 ## AWS EventBridge lambda event triggers
 
-Starting with v3.0.0 AWS EventBridge lambda event triggers and all associated EventBridge resouurces will be deployed using native CloudFormation instead of a CustomResource that used a lambda to deploy them via the AWS SDK/API.
+Starting with v3.0.0 AWS EventBridge lambda event triggers and all associated EventBridge resources will be deployed using normal CloudFormation resources instead of a custom resource that used a lambda to deploy them via the AWS SDK/API.
 
-To use this prior to deprecation set `useNativeCloudFormation: true` in lambda EventBridge trigger definition. This is a per eventt trigger config property.
+To use this prior to deprecation set `useNativeCloudFormation: true` in lambda EventBridge trigger definition. This is a per event trigger config property.
 <a name="SERVICE_OBJECT_NOTATION"><div>&nbsp;</div></a>
 
 ## `service` property object notation
