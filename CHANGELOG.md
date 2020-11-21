@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.12.0](https://github.com/serverless/serverless/compare/v2.11.1...v2.12.0) (2020-11-20)
+
+### Features
+
+- **AWS HTTP API:** Support metrics ([#8510](https://github.com/serverless/serverless/issues/8510)) ([3feafbc](https://github.com/serverless/serverless/commit/3feafbceb5777904ea19aab1765c85935d5aa904)) ([Baptiste Guerin](https://github.com/BaptistG))8496
+
+### Bug Fixes
+
+- **Packaging:** Fix compatibility with npm v7.0 ([#8505](https://github.com/serverless/serverless/issues/8505)) ([fdd962b](https://github.com/serverless/serverless/commit/fdd962baa53a7471d33ad041e927c705051b343a)) ([Dmitry Gorbash](https://github.com/dgorbash))
+- **AWS API Gateway:** Fix `usagePlan.throttle` handling ([#8472](https://github.com/serverless/serverless/issues/8472)) ([04e18cb](https://github.com/serverless/serverless/commit/04e18cbebf70ca6fd0534fcee5544de8f6569ed3)) ([andreizet](https://github.com/andreizet))
+- **CLI:** Ensure to not fallback to Framework on components run error ([#8530](https://github.com/serverless/serverless/issues/8530)) ([15332c5](https://github.com/serverless/serverless/commit/15332c55525b91dc0ad11d903789581fb5104b64)) ([Mariusz Nowak](https://github.com/medikoo))
+
+- **Templates:** Fix service rename ([#8508](https://github.com/serverless/serverless/issues/8508)) ([8c0d892](https://github.com/serverless/serverless/commit/8c0d89255e5f3bf2835966fde2f441b828607106)) ([Mariusz Nowak](https://github.com/medikoo))
+
+### Templates
+
+- **`aws-nodejs-typescript`:**
+  - Upgrade ([#8496](https://github.com/serverless/serverless/issues/8496)) ([786809e](https://github.com/serverless/serverless/commit/786809e262b56490a78a923b0b031378badb18c0)) ([Chris Schuld](https://github.com/cbschuld))
+  - Fix tooling options ([#8501](https://github.com/serverless/serverless/issues/8501)) ([cc103f1](https://github.com/serverless/serverless/commit/cc103f147eddcb29e38937326cc551473925e535)) ([David ALLIX](https://github.com/webda2l))
+- **`aws-go-mod`:** Fix cleanup ([#8507](https://github.com/serverless/serverless/issues/8507)) ([2791c71](https://github.com/serverless/serverless/commit/2791c7142f795ddab7da1b8cbfa7588f9ae4896d)) ([Fukaya Temma](https://github.com/Pranc1ngPegasus))
+
+### [2.11.1](https://github.com/serverless/serverless/compare/v2.11.0...v2.11.1) (2020-11-09)
+
+### Bug Fixes
+
+- **Config Schema:** Fix multiple event types support in `defineFunctionEventProperties` schema extension method ([#8486](https://github.com/serverless/serverless/issues/8486)) ([e32b771](https://github.com/serverless/serverless/commit/e32b7714253108f9078d2218e68c5994f20cde64)) ([Frédéric Barthelet](https://github.com/fredericbarthelet))
+
 ## [2.11.0](https://github.com/serverless/serverless/compare/v2.10.0...v2.11.0) (2020-11-06)
 
 ### Features
@@ -290,6 +317,13 @@ All notable changes to this project will be documented in this file. See [standa
 - **AWS ALB:** Remove support for `authorizers[].allowUnauthenticated` ([#8160](https://github.com/serverless/serverless/issues/8160)) ([7c304df](https://github.com/serverless/serverless/commit/7c304df5ffcaaf1dbbd90ccf714f55f4a6cc6a0b)) ([morgan-sam](https://github.com/morgan-sam))
 - **AWS HTTP API:** Drop support for `timeout` setting ([#8184](https://github.com/serverless/serverless/issues/8184)) ([1cfd1f2](https://github.com/serverless/serverless/commit/1cfd1f25a278679d94e4cd30baf1b2092ff83d8a)) ([Mariusz Nowak](https://github.com/medikoo))
 - Replace `mkdrip` with `esnureDir` from `fs-extra` ([#8183](https://github.com/serverless/serverless/issues/8183)) ([1beb8d0](https://github.com/serverless/serverless/commit/1beb8d0246e705d3d724dbd2fb4c6639bc961cba)) ([Mariusz Nowak](https://github.com/medikoo))
+
+### [1.83.2](https://github.com/serverless/serverless/compare/v1.83.1...v1.83.2) (2020-11-06)
+
+### Bug Fixes
+
+- **AWS HTTP API:** Ensure to report deprecation at initialization phase ([#8483](https://github.com/serverless/serverless/issues/8469)) ([61a72c6](https://github.com/serverless/serverless/commit/61a72c69ed488bd8ae10819ff12b7a2f5679b8e3)) ([Mariusz Nowak](https://github.com/medikoo))
+- Ensure to inspect configuration once it's fully resolved ([#8483](https://github.com/serverless/serverless/issues/8469)) ([1ea4719](https://github.com/serverless/serverless/commit/1ea47193db3f51a33ecf25ae3ba0aa973530644a)) ([Mariusz Nowak](https://github.com/medikoo))
 
 ## [1.83.1](https://github.com/serverless/serverless/compare/v1.83.0...v1.83.1) (2020-11-03)
 
