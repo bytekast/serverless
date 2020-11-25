@@ -13,6 +13,17 @@ layout: Doc
 Starting with v3.0.0 AWS EventBridge lambda event triggers and all associated EventBridge resources will be deployed using normal CloudFormation resources instead of a custom resource that used a lambda to deploy them via the AWS SDK/API.
 
 To use this prior to deprecation set `useNativeCloudFormation: true` in lambda EventBridge trigger definition. This is a per event trigger config property.
+
+<a name="LOAD_VARIABLES_FROM_ENV_FILES"><div>&nbsp;</div></a>
+
+## Automatic loading environment variables from .env and .env.{stage} files
+
+Starting with v3.0.0, environment variables will be automatically loaded from `.env` and `.env.{stage}` files if they're present.
+
+Adapt to this behavior now by adding `useDotenv: true` to service configuration.
+
+Note that env vars are handled differently than with [serverless-dotenv-plugin](https://github.com/colynb/serverless-dotenv-plugin), check [documentation](/framework/docs/environment-variables/) for more info.
+
 <a name="SERVICE_OBJECT_NOTATION"><div>&nbsp;</div></a>
 
 ## `service` property object notation
