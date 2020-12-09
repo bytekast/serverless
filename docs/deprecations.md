@@ -17,6 +17,12 @@ disabledDeprecations:
   - '*' # To disable all deprecation messages
 ```
 
+<a name="NEW_PACKAGING_PATTERNS"><div>&nbsp;</div></a>
+
+## New way to define packaging patterns
+
+Please use `package.patterns`. `package.include` and `package.exclude` will be removed with v3.0.0
+
 <a name="MISSING_SERVICE_CONFIGURATION'"><div>&nbsp;</div></a>
 
 ## `Serverless` constructor `config.configuration` requirement
