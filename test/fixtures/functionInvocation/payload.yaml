@@ -1,0 +1,8 @@
+service: payload
+
+functions: # Your "Functions"
+  usersCreate:
+    events: # The "Events" that trigger this function
+      - http: post payload/create
+
+resources: # The "Resources" your "Functions" use.
