@@ -11,3 +11,4 @@ functions:
       - http:
           path: local
           method: get
+  test:

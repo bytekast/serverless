@@ -2,6 +2,7 @@ service: payload
 
 functions: # Your "Functions"
   usersCreate:
+    handler: handler.hello
     events: # The "Events" that trigger this function
       - http: post payload/create
 
