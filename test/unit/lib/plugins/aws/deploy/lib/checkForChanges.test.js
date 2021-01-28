@@ -585,29 +585,12 @@ describe('checkForChanges', () => {
   });
 
   describe('#checkLogGroupSubscriptionFilterResourceLimitExceeded', () => {
-    let CloudWatchLogsStub;
-    let deleteSubscriptionFilterStub;
     const accountId = '123456789';
     const serviceName = 'my-service';
     const region = 'us-east-1';
-    let describeSubscriptionFiltersResponse = {};
     let getFunctionStub;
 
     beforeEach(() => {
-      CloudWatchLogsStub = class {
-        constructor() {
-          this.deleteSubscriptionFilter = deleteSubscriptionFilterStub = sandbox.spy(() => ({
-            promise: () => BbPromise.resolve(),
-          }));
-
-          this.describeSubscriptionFilters = sandbox.spy(() => ({
-            promise: () => BbPromise.resolve(describeSubscriptionFiltersResponse),
-          }));
-        }
-      };
-
-      provider.sdk.CloudWatchLogs = CloudWatchLogsStub;
-
       sandbox.stub(provider, 'getAccountInfo').returns(
         BbPromise.resolve({
           accountId,
@@ -616,8 +599,11 @@ describe('checkForChanges', () => {
       );
 
       sandbox.stub(awsDeploy.serverless.service, 'getServiceName').returns(serviceName);
-      getFunctionStub = sandbox.stub(awsDeploy.provider, 'request').rejects(new Error('Error'));
 
+      getFunctionStub = sandbox
+        .stub(awsDeploy.provider, 'request')
+        .usingPromise(BbPromise.Promise)
+        .rejects(new Error('Error'));
       sandbox.stub(awsDeploy, 'getMostRecentObjects').resolves();
       sandbox.stub(awsDeploy, 'getObjectMetadata').resolves();
       sandbox.stub(awsDeploy, 'checkIfDeploymentIsNecessary').resolves();
@@ -663,8 +649,22 @@ describe('checkForChanges', () => {
     });
 
     describe('option to force update is set', () => {
+      const lambdaArguments = [
+        sandbox.match('Lambda'),
+        sandbox.match('getFunction'),
+        sandbox.match({ FunctionName: 'my-service-dev-first' }),
+      ];
+      const describeArguments = [
+        sandbox.match('Cloudwatch'),
+        sandbox.match('describeSubscriptionFilters'),
+      ];
+
       beforeEach(() => {
         awsDeploy.serverless.service.provider.cloudWatchLogs = {};
+        getFunctionStub
+          .withArgs(...lambdaArguments)
+          .usingPromise(BbPromise.Promise)
+          .rejects(new Error('Error'));
       });
 
       afterEach(() => {
@@ -680,13 +680,16 @@ describe('checkForChanges', () => {
 
         awsDeploy.serverless.service.setFunctionNames();
 
-        describeSubscriptionFiltersResponse = {
-          subscriptionFilters: [],
-        };
+        getFunctionStub
+          .withArgs(...describeArguments)
+          .usingPromise(BbPromise.Promise)
+          .resolves({ subscriptionFilters: [] });
 
-        return awsDeploy
-          .checkForChanges()
-          .then(() => expect(deleteSubscriptionFilterStub).to.not.have.been.called);
+        return awsDeploy.checkForChanges().then(() => {
+          expect(getFunctionStub).to.have.been.calledWithMatch(...lambdaArguments);
+          expect(getFunctionStub).to.have.been.calledWithMatch(...describeArguments);
+          return expect(getFunctionStub).to.have.been.calledTwice;
+        });
       });
 
       it('should not call delete if there is a subFilter and the ARNs/logical IDs are the same', () => {
@@ -698,18 +701,23 @@ describe('checkForChanges', () => {
 
         awsDeploy.serverless.service.setFunctionNames();
 
-        describeSubscriptionFiltersResponse = {
-          subscriptionFilters: [
-            {
-              destinationArn: `arn:aws:lambda:${region}:${accountId}:function:${serviceName}-dev-first`,
-              filterName: 'stack-name-FirstLogsSubscriptionFilterCloudWatchLog1-1KAK9SAG7Y9YN',
-            },
-          ],
-        };
+        getFunctionStub
+          .withArgs(...describeArguments)
+          .usingPromise(BbPromise.Promise)
+          .resolves({
+            subscriptionFilters: [
+              {
+                destinationArn: `arn:aws:lambda:${region}:${accountId}:function:${serviceName}-dev-first`,
+                filterName: 'stack-name-FirstLogsSubscriptionFilterCloudWatchLog1-1KAK9SAG7Y9YN',
+              },
+            ],
+          });
 
-        return awsDeploy
-          .checkForChanges()
-          .then(() => expect(deleteSubscriptionFilterStub).to.not.have.been.called);
+        return awsDeploy.checkForChanges().then(() => {
+          expect(getFunctionStub).to.have.been.calledWithMatch(...lambdaArguments);
+          expect(getFunctionStub).to.have.been.calledWithMatch(...describeArguments);
+          return expect(getFunctionStub).to.have.been.calledTwice;
+        });
       });
 
       it('should call delete if there is a subFilter but the ARNs are not the same', () => {
@@ -721,18 +729,41 @@ describe('checkForChanges', () => {
 
         awsDeploy.serverless.service.setFunctionNames();
 
-        describeSubscriptionFiltersResponse = {
-          subscriptionFilters: [
-            {
-              destinationArn: `arn:aws:lambda:${region}:${accountId}:function:${serviceName}-dev-not-first`,
-              filterName: 'stack-name-FirstLogsSubscriptionFilterCloudWatchLog1-1KAK9SAG7Y9YN',
-            },
-          ],
-        };
+        const filterNameArgument =
+          'stack-name-FirstLogsSubscriptionFilterCloudWatchLog1-1KAK9SAG7Y9YN';
 
-        return awsDeploy
-          .checkForChanges()
-          .then(() => expect(deleteSubscriptionFilterStub).to.have.been.called);
+        getFunctionStub
+          .withArgs(...describeArguments)
+          .usingPromise(BbPromise.Promise)
+          .resolves({
+            subscriptionFilters: [
+              {
+                destinationArn: `arn:aws:lambda:${region}:${accountId}:function:${serviceName}-dev-not-first`,
+                filterName: filterNameArgument,
+              },
+            ],
+          });
+
+        const deleteArguments = [
+          sandbox.match('Cloudwatch'),
+          sandbox.match('deleteSubscriptionFilter'),
+          sandbox.match({
+            filterName: filterNameArgument,
+            logGroupName: '/aws/lambda/hello1',
+          }),
+        ];
+
+        getFunctionStub
+          .withArgs(...deleteArguments)
+          .usingPromise(BbPromise.Promise)
+          .resolves();
+
+        return awsDeploy.checkForChanges().then(() => {
+          expect(getFunctionStub).to.have.been.calledWithMatch(...lambdaArguments);
+          expect(getFunctionStub).to.have.been.calledWithMatch(...describeArguments);
+          expect(getFunctionStub).to.have.been.calledWithMatch(...deleteArguments);
+          return expect(getFunctionStub).to.have.been.calledThrice;
+        });
       });
 
       it('should call delete if there is a subFilter but the logical IDs are not the same', () => {
@@ -744,18 +775,41 @@ describe('checkForChanges', () => {
 
         awsDeploy.serverless.service.setFunctionNames();
 
-        describeSubscriptionFiltersResponse = {
-          subscriptionFilters: [
-            {
-              destinationArn: `arn:aws:lambda:${region}:${accountId}:function:${serviceName}-dev-first`,
-              filterName: 'stack-name-FirstLogsSubscriptionFilterCloudWatchLog2-1KAK9SAG7Y9YN',
-            },
-          ],
-        };
+        const filterNameArgument =
+          'stack-name-FirstLogsSubscriptionFilterCloudWatchLog2-1KAK9SAG7Y9YN';
 
-        return awsDeploy
-          .checkForChanges()
-          .then(() => expect(deleteSubscriptionFilterStub).to.have.been.called);
+        getFunctionStub
+          .withArgs(...describeArguments)
+          .usingPromise(BbPromise.Promise)
+          .resolves({
+            subscriptionFilters: [
+              {
+                destinationArn: `arn:aws:lambda:${region}:${accountId}:function:${serviceName}-dev-first`,
+                filterName: filterNameArgument,
+              },
+            ],
+          });
+
+        const deleteArguments = [
+          sandbox.match('Cloudwatch'),
+          sandbox.match('deleteSubscriptionFilter'),
+          sandbox.match({
+            filterName: filterNameArgument,
+            logGroupName: '/aws/lambda/hello1',
+          }),
+        ];
+
+        getFunctionStub
+          .withArgs(...deleteArguments)
+          .usingPromise(BbPromise.Promise)
+          .resolves();
+
+        return awsDeploy.checkForChanges().then(() => {
+          expect(getFunctionStub).to.have.been.calledWithMatch(...lambdaArguments);
+          expect(getFunctionStub).to.have.been.calledWithMatch(...describeArguments);
+          expect(getFunctionStub).to.have.been.calledWithMatch(...deleteArguments);
+          return expect(getFunctionStub).to.have.been.calledThrice;
+        });
       });
 
       it('should not call delete if there is a subFilter and the ARNs/logical IDs are the same with custom function name', () => {
@@ -768,18 +822,23 @@ describe('checkForChanges', () => {
 
         awsDeploy.serverless.service.setFunctionNames();
 
-        describeSubscriptionFiltersResponse = {
-          subscriptionFilters: [
-            {
-              destinationArn: `arn:aws:lambda:${region}:${accountId}:function:my-test-function`,
-              filterName: 'stack-name-FirstLogsSubscriptionFilterCloudWatchLog1-1KAK9SAG7Y9YN',
-            },
-          ],
-        };
+        getFunctionStub
+          .withArgs(...describeArguments)
+          .usingPromise(BbPromise.Promise)
+          .resolves({
+            subscriptionFilters: [
+              {
+                destinationArn: `arn:aws:lambda:${region}:${accountId}:function:my-test-function`,
+                filterName: 'stack-name-FirstLogsSubscriptionFilterCloudWatchLog1-1KAK9SAG7Y9YN',
+              },
+            ],
+          });
 
-        return awsDeploy
-          .checkForChanges()
-          .then(() => expect(deleteSubscriptionFilterStub).to.not.have.been.called);
+        return awsDeploy.checkForChanges().then(() => {
+          // First call to describe lambda as changed since the name changed
+          expect(getFunctionStub).to.have.been.calledWithMatch(...describeArguments);
+          return expect(getFunctionStub).to.have.been.calledTwice;
+        });
       });
 
       it('should not call delete when ARN/logical IDs are the same accounting for non-standard partitions', () => {
@@ -799,18 +858,23 @@ describe('checkForChanges', () => {
 
         awsDeploy.serverless.service.setFunctionNames();
 
-        describeSubscriptionFiltersResponse = {
-          subscriptionFilters: [
-            {
-              destinationArn: `arn:aws-us-gov:lambda:${region}:${accountId}:function:my-test-function`,
-              filterName: 'stack-name-FirstLogsSubscriptionFilterCloudWatchLog1-1KAK9SAG7Y9YN',
-            },
-          ],
-        };
+        getFunctionStub
+          .withArgs(...describeArguments)
+          .usingPromise(BbPromise.Promise)
+          .resolves({
+            subscriptionFilters: [
+              {
+                destinationArn: `arn:aws-us-gov:lambda:${region}:${accountId}:function:my-test-function`,
+                filterName: 'stack-name-FirstLogsSubscriptionFilterCloudWatchLog1-1KAK9SAG7Y9YN',
+              },
+            ],
+          });
 
-        return awsDeploy
-          .checkForChanges()
-          .then(() => expect(deleteSubscriptionFilterStub).to.not.have.been.called);
+        return awsDeploy.checkForChanges().then(() => {
+          // First call to describe lambda as changed since the name changed
+          expect(getFunctionStub).to.have.been.calledWithMatch(...describeArguments);
+          return expect(getFunctionStub).to.have.been.calledTwice;
+        });
       });
 
       it('should call delete if there is a subFilter but the ARNs are not the same with custom function name', () => {
@@ -822,19 +886,41 @@ describe('checkForChanges', () => {
         };
 
         awsDeploy.serverless.service.setFunctionNames();
+        const filterNameArgument =
+          'stack-name-FirstLogsSubscriptionFilterCloudWatchLog1-1KAK9SAG7Y9YN';
 
-        describeSubscriptionFiltersResponse = {
-          subscriptionFilters: [
-            {
-              destinationArn: `arn:aws:lambda:${region}:${accountId}:function:my-other-test-function`,
-              filterName: 'stack-name-FirstLogsSubscriptionFilterCloudWatchLog1-1KAK9SAG7Y9YN',
-            },
-          ],
-        };
+        getFunctionStub
+          .withArgs(...describeArguments)
+          .usingPromise(BbPromise.Promise)
+          .resolves({
+            subscriptionFilters: [
+              {
+                destinationArn: `arn:aws:lambda:${region}:${accountId}:function:my-other-test-function`,
+                filterName: filterNameArgument,
+              },
+            ],
+          });
 
-        return awsDeploy
-          .checkForChanges()
-          .then(() => expect(deleteSubscriptionFilterStub).to.have.been.called);
+        const deleteArguments = [
+          sandbox.match('Cloudwatch'),
+          sandbox.match('deleteSubscriptionFilter'),
+          sandbox.match({
+            filterName: filterNameArgument,
+            logGroupName: '/aws/lambda/hello1',
+          }),
+        ];
+
+        getFunctionStub
+          .withArgs(...deleteArguments)
+          .usingPromise(BbPromise.Promise)
+          .resolves();
+
+        return awsDeploy.checkForChanges().then(() => {
+          // lambda name is still different
+          expect(getFunctionStub).to.have.been.calledWithMatch(...describeArguments);
+          expect(getFunctionStub).to.have.been.calledWithMatch(...deleteArguments);
+          return expect(getFunctionStub).to.have.been.calledThrice;
+        });
       });
     });
 
