@@ -29,6 +29,20 @@ describe('#request', () => {
     );
   });
 
+  it('should enable aws logging when debug log is enabled', () => {
+    const configStub = sinon.stub();
+    // enable logging for test
+    process.env.SLS_DEBUG = true;
+    // importing should enable aws logging
+    proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+      'aws-sdk': { config: configStub },
+    });
+    expect(configStub.logger).not.to.be.null;
+    expect(configStub.logger).not.to.be.undefined;
+    // disable logging for rest of the tests
+    process.env.SLS_DEBUG = false;
+  });
+
   it('should trigger the expected AWS SDK invokation', () => {
     // mocking S3 for testing
     //
