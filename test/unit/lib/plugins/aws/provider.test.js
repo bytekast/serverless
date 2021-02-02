@@ -4,6 +4,7 @@
 
 const _ = require('lodash');
 const chai = require('chai');
+const path = require('path');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const overrideEnv = require('process-utils/override-env');
