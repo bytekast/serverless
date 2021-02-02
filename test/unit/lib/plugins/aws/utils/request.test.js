@@ -3,7 +3,6 @@
 const sinon = require('sinon');
 const chai = require('chai');
 const proxyquire = require('proxyquire');
-const BbPromise = require('bluebird');
 
 const expect = chai.expect;
 
@@ -12,6 +11,7 @@ chai.use(require('sinon-chai'));
 
 describe('#request', () => {
   before(() => {
+    // required to minimize waiting times when simulating retries
     const originalSetTimeout = setTimeout;
     sinon
       .stub(global, 'setTimeout')
@@ -53,7 +53,7 @@ describe('#request', () => {
 
       putObject() {
         return {
-          send: (cb) => cb(null, { called: true }),
+          promise: () => Promise.resolve({ called: true }),
         };
       }
     }
@@ -73,7 +73,7 @@ describe('#request', () => {
 
       put() {
         return {
-          send: (cb) => cb(null, { called: true }),
+          promise: () => Promise.resolve({ called: true }),
         };
       }
     }
@@ -96,8 +96,8 @@ describe('#request', () => {
 
       describeStacks() {
         return {
-          send: (cb) =>
-            cb(null, {
+          promise: () =>
+            Promise.resolve({
               region: this.config.region,
             }),
         };
@@ -124,10 +124,10 @@ describe('#request', () => {
       message: 'Testing retry',
     };
     const sendFake = {
-      send: sinon.stub(),
+      promise: sinon.stub(),
     };
-    sendFake.send.onFirstCall().yields(error);
-    sendFake.send.yields(undefined, {});
+    sendFake.promise.onCall(0).returns(Promise.reject(error));
+    sendFake.promise.onCall(1).returns(Promise.resolve({}));
     class FakeS3 {
       constructor(credentials) {
         this.credentials = credentials;
@@ -145,7 +145,7 @@ describe('#request', () => {
     awsRequest('S3', 'error', {}, { credentials: {} })
       .then((data) => {
         expect(data).to.exist;
-        expect(sendFake.send).to.have.been.calledTwice;
+        expect(sendFake.promise).to.have.been.calledTwice;
         done();
       })
       .catch(done);
@@ -158,10 +158,10 @@ describe('#request', () => {
       message: 'Testing retry',
     };
     const sendFake = {
-      send: sinon.stub(),
+      promise: sinon.stub(),
     };
-    sendFake.send.onFirstCall().yields(error);
-    sendFake.send.yields(undefined, {});
+    sendFake.promise.onCall(0).returns(Promise.reject(error));
+    sendFake.promise.onCall(1).returns(Promise.resolve({}));
     class FakeS3 {
       constructor(credentials) {
         this.credentials = credentials;
@@ -179,7 +179,7 @@ describe('#request', () => {
     awsRequest('S3', 'error', {}, { credentials: {} })
       .then((data) => {
         expect(data).to.exist;
-        expect(sendFake.send).to.have.been.calledTwice;
+        expect(sendFake.promise).to.have.been.calledTwice;
         done();
       })
       .catch(done);
@@ -192,10 +192,10 @@ describe('#request', () => {
       message: 'Testing retry',
     };
     const sendFake = {
-      send: sinon.stub(),
+      promise: sinon.stub(),
     };
-    sendFake.send.onFirstCall().yields(error);
-    sendFake.send.yields(undefined, {});
+    sendFake.promise.onFirstCall().returns(error);
+    sendFake.promise.returns(undefined, {});
     class FakeS3 {
       constructor(credentials) {
         this.credentials = credentials;
@@ -212,7 +212,7 @@ describe('#request', () => {
     awsRequest('S3', 'error', {}, { credentials: {} })
       .then(() => done('Should not succeed'))
       .catch(() => {
-        expect(sendFake.send).to.have.been.calledOnce;
+        expect(sendFake.promise).to.have.been.calledOnce;
         done();
       });
   });
@@ -229,9 +229,7 @@ describe('#request', () => {
 
       error() {
         return {
-          send(cb) {
-            cb(error);
-          },
+          promise: () => Promise.reject(error),
         };
       }
     }
@@ -265,9 +263,7 @@ describe('#request', () => {
 
       error() {
         return {
-          send(cb) {
-            cb(awsErrorResponse);
-          },
+          promise: () => Promise.reject(awsErrorResponse),
         };
       }
     }
@@ -305,9 +301,7 @@ describe('#request', () => {
 
       error() {
         return {
-          send(cb) {
-            cb(awsErrorResponse);
-          },
+          promise: () => Promise.reject(awsErrorResponse),
         };
       }
     }
@@ -338,9 +332,7 @@ describe('#request', () => {
 
       error() {
         return {
-          send(cb) {
-            cb(error);
-          },
+          promise: () => Promise.reject(error),
         };
       }
     }
@@ -367,7 +359,7 @@ describe('#request', () => {
 
       putObject() {
         return {
-          send: (cb) => cb(null, { called: true }),
+          promise: () => Promise.resolve({ called: true }),
         };
       }
     }
@@ -395,7 +387,7 @@ describe('#request', () => {
     it('should reuse the result if arguments are the same', (done) => {
       // mocking CF for testing
       const expectedResult = { called: true };
-      const sendStub = sinon.stub().yields(null, { called: true });
+      const promiseStub = sinon.stub().returns(Promise.resolve({ called: true }));
       class FakeCF {
         constructor(credentials) {
           this.credentials = credentials;
@@ -403,7 +395,7 @@ describe('#request', () => {
 
         describeStacks() {
           return {
-            send: sendStub,
+            promise: promiseStub,
           };
         }
       }
@@ -421,22 +413,22 @@ describe('#request', () => {
         );
       const requests = [];
       for (let n = 0; n < numTests; n++) {
-        requests.push(BbPromise.try(() => executeRequest()));
+        requests.push(executeRequest());
       }
 
-      BbPromise.all(requests).then((results) => {
+      Promise.all(requests).then((results) => {
         expect(Object.keys(results).length).to.equal(numTests);
         results.forEach((result) => {
           expect(result).to.deep.equal(expectedResult);
         });
-        expect(sendStub).to.have.been.calledOnce;
+        expect(promiseStub).to.have.been.calledOnce;
         done();
       });
     });
 
     it('should not reuse the result if the region change', () => {
       const expectedResult = { called: true };
-      const sendStub = sinon.stub().yields(null, { called: true });
+      const promiseStub = sinon.stub().returns(Promise.resolve({ called: true }));
       class FakeCF {
         constructor(credentials) {
           this.credentials = credentials;
@@ -444,7 +436,7 @@ describe('#request', () => {
 
         describeStacks() {
           return {
-            send: sendStub,
+            promise: promiseStub,
           };
         }
       }
@@ -464,15 +456,15 @@ describe('#request', () => {
           }
         );
       const requests = [];
-      requests.push(BbPromise.try(() => executeRequestWithRegion('us-east-1')));
-      requests.push(BbPromise.try(() => executeRequestWithRegion('ap-northeast-1')));
+      requests.push(executeRequestWithRegion('us-east-1'));
+      requests.push(executeRequestWithRegion('ap-northeast-1'));
 
-      return BbPromise.all(requests).then((results) => {
+      return Promise.all(requests).then((results) => {
         expect(Object.keys(results).length).to.equal(2);
         results.forEach((result) => {
           expect(result).to.deep.equal(expectedResult);
         });
-        return expect(sendStub.callCount).to.equal(2);
+        return expect(promiseStub.callCount).to.equal(2);
       });
     });
   });
