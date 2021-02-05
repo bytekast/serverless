@@ -24,8 +24,8 @@ describe('#request', () => {
 
   it('shoud fail with a meaningful error when credentials are missing', () => {
     const awsRequest = require('../../../../../../lib/plugins/aws/utils/request');
-    expect(awsRequest('S3', 'putObject', {})).to.eventually.be.rejectedWith(
-      'Inappropriate call of awsRequest(), missing credentials in serviceOptions'
+    expect(awsRequest({ name: 'S3' }, 'putObject', {})).to.eventually.be.rejectedWith(
+      'Inappropriate call of awsRequest(), check service.params.credentials'
     );
   });
 
@@ -60,7 +60,7 @@ describe('#request', () => {
     const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
       'aws-sdk': { S3: FakeS3 },
     });
-    return awsRequest('S3', 'putObject', {}, { credentials: {} }).then((data) => {
+    return awsRequest({ name: 'S3', params: { credentials: {} } }, 'putObject', {}).then((data) => {
       expect(data.called).to.equal(true);
     });
   });
@@ -82,7 +82,11 @@ describe('#request', () => {
       'aws-sdk': { DynamoDB: { DocumentClient } },
     });
 
-    return awsRequest('DynamoDB.DocumentClient', 'put', {}, { credentials: {} }).then((data) => {
+    return awsRequest(
+      { name: 'DynamoDB.DocumentClient', params: { credentials: {} } },
+      'put',
+      {}
+    ).then((data) => {
       expect(data.called).to.equal(true);
     });
   });
@@ -108,10 +112,9 @@ describe('#request', () => {
       'aws-sdk': { CloudFormation: FakeCloudFormation },
     });
     return awsRequest(
-      'CloudFormation',
+      { name: 'CloudFormation', params: { credentials: {}, region: 'ap-northeast-1' } },
       'describeStacks',
-      { StackName: 'foo' },
-      { credentials: {}, region: 'ap-northeast-1' }
+      { StackName: 'foo' }
     ).then((data) => {
       expect(data).to.eql({ region: 'ap-northeast-1' });
     });
@@ -142,7 +145,7 @@ describe('#request', () => {
       'aws-sdk': { S3: FakeS3 },
     });
 
-    awsRequest('S3', 'error', {}, { credentials: {} })
+    awsRequest({ name: 'S3', params: { credentials: {} } }, 'error', {})
       .then((data) => {
         expect(data).to.exist;
         expect(sendFake.promise).to.have.been.calledTwice;
@@ -176,7 +179,7 @@ describe('#request', () => {
       'aws-sdk': { S3: FakeS3 },
     });
 
-    awsRequest('S3', 'error', {}, { credentials: {} })
+    awsRequest({ name: 'S3', params: { credentials: {} } }, 'error')
       .then((data) => {
         expect(data).to.exist;
         expect(sendFake.promise).to.have.been.calledTwice;
@@ -209,7 +212,7 @@ describe('#request', () => {
       'aws-sdk': { S3: FakeS3 },
     });
 
-    awsRequest('S3', 'error', {}, { credentials: {} })
+    awsRequest({ name: 'S3', params: { credentials: {} } }, 'error', {})
       .then(() => done('Should not succeed'))
       .catch(() => {
         expect(sendFake.promise).to.have.been.calledOnce;
@@ -238,7 +241,7 @@ describe('#request', () => {
       'aws-sdk': { S3: FakeS3 },
     });
 
-    awsRequest('S3', 'error', {}, { credentials: {} })
+    awsRequest({ name: 'S3', params: { credentials: {} } }, 'error', {})
       .then(() => done('Should not succeed'))
       .catch(() => done());
   });
@@ -272,7 +275,7 @@ describe('#request', () => {
       'aws-sdk': { S3: FakeS3 },
     });
 
-    awsRequest('S3', 'error', {}, { credentials: {} })
+    awsRequest({ name: 'S3', params: { credentials: {} } }, 'error', {})
       .then(() => done('Should not succeed'))
       .catch((err) => {
         expect(err.message).to.equal(awsErrorResponse.message);
@@ -310,7 +313,7 @@ describe('#request', () => {
       'aws-sdk': { S3: FakeS3 },
     });
 
-    awsRequest('S3', 'error', {}, { credentials: {} })
+    awsRequest({ name: 'S3', params: { credentials: {} } }, 'error', {})
       .then(() => done('Should not succeed'))
       .catch((err) => {
         expect(err.message).to.equal(awsErrorResponse.code);
@@ -341,7 +344,7 @@ describe('#request', () => {
       'aws-sdk': { S3: FakeS3 },
     });
 
-    awsRequest('S3', 'error', {}, { credentials: {} })
+    awsRequest({ name: 'S3', params: { credentials: {} } }, 'error', {})
       .then(() => done('Should not succeed'))
       .catch((err) => {
         expect(err.message).to.contain('in our docs here:');
@@ -353,13 +356,14 @@ describe('#request', () => {
   it('should enable S3 acceleration if "--aws-s3-accelerate" CLI option is provided', () => {
     // mocking S3 for testing
     class FakeS3 {
-      constructor(credentials) {
-        this.credentials = credentials;
+      constructor(params) {
+        this.credentials = params.credentials;
+        this.useAccelerateEndpoint = params.useAccelerateEndpoint;
       }
 
       putObject() {
         return {
-          promise: () => Promise.resolve({ called: true }),
+          promise: () => Promise.resolve(this),
         };
       }
     }
@@ -368,18 +372,13 @@ describe('#request', () => {
       'aws-sdk': { S3: FakeS3 },
     });
 
-    const credentials = {
-      useAccelerateEndpoint: false,
-    };
-
     return awsRequest(
-      'S3',
+      { name: 'S3', params: { credentials: {}, isS3TransferAccelerationEnabled: true } },
       'putObject',
-      {},
-      { credentials, isS3TransferAccelerationEnabled: true }
-    ).then(() => {
+      {}
+    ).then((service) => {
       // those credentials are passed to the service constructor
-      expect(credentials.useAccelerateEndpoint).to.equal(true);
+      expect(service.useAccelerateEndpoint).to.be.true;
     });
   });
 
@@ -406,10 +405,9 @@ describe('#request', () => {
       const numTests = 100;
       const executeRequest = () =>
         awsRequest.memoized(
-          'CloudFormation',
+          { name: 'CloudFormation', params: { credentials: {}, useCache: true } },
           'describeStacks',
-          {},
-          { credentials: {}, useCache: true }
+          {}
         );
       const requests = [];
       for (let n = 0; n < numTests; n++) {
@@ -447,13 +445,9 @@ describe('#request', () => {
 
       const executeRequestWithRegion = (region) =>
         awsRequest(
-          'CloudFormation',
+          { name: 'CloudFormation', params: { region, credentials: {}, useCache: true } },
           'describeStacks',
-          { StackName: 'same-stack' },
-          {
-            region,
-            credentials: {},
-          }
+          { StackName: 'same-stack' }
         );
       const requests = [];
       requests.push(executeRequestWithRegion('us-east-1'));
