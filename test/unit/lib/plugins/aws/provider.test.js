@@ -492,7 +492,7 @@ describe('AwsProvider', () => {
       const AwsProviderProxyquired = proxyquire
         .noCallThru()
         .load('../../../../../lib/plugins/aws/provider.js', {
-          './utils/request': awsRequestStub,
+          '../../aws/request': awsRequestStub,
           '@serverless/utils/log': logStub,
         });
       PAwsProvider = new AwsProviderProxyquired(serverless, options);

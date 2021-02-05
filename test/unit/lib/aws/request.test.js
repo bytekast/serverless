@@ -23,9 +23,9 @@ describe('#request', () => {
   });
 
   it('shoud fail with a meaningful error when credentials are missing', () => {
-    const awsRequest = require('../../../../../../lib/plugins/aws/utils/request');
+    const awsRequest = require('../../../../lib/aws/request');
     expect(awsRequest({ name: 'S3' }, 'putObject', {})).to.eventually.be.rejectedWith(
-      'Inappropriate call of awsRequest(), check service.params.credentials'
+      'Inappropriate call of awsRequest(), check service object'
     );
   });
 
@@ -34,7 +34,7 @@ describe('#request', () => {
     // enable logging for test
     process.env.SLS_DEBUG = true;
     // importing should enable aws logging
-    proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { config: configStub },
     });
     expect(configStub.logger).not.to.be.null;
@@ -57,7 +57,7 @@ describe('#request', () => {
         };
       }
     }
-    const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    const awsRequest = proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { S3: FakeS3 },
     });
     return awsRequest({ name: 'S3', params: { credentials: {} } }, 'putObject', {}).then((data) => {
@@ -78,7 +78,7 @@ describe('#request', () => {
       }
     }
 
-    const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    const awsRequest = proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { DynamoDB: { DocumentClient } },
     });
 
@@ -108,7 +108,7 @@ describe('#request', () => {
       }
     }
 
-    const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    const awsRequest = proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { CloudFormation: FakeCloudFormation },
     });
     return awsRequest(
@@ -141,7 +141,7 @@ describe('#request', () => {
       }
     }
 
-    const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    const awsRequest = proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { S3: FakeS3 },
     });
 
@@ -175,7 +175,7 @@ describe('#request', () => {
       }
     }
 
-    const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    const awsRequest = proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { S3: FakeS3 },
     });
 
@@ -208,7 +208,7 @@ describe('#request', () => {
         return sendFake;
       }
     }
-    const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    const awsRequest = proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { S3: FakeS3 },
     });
 
@@ -237,7 +237,7 @@ describe('#request', () => {
       }
     }
 
-    const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    const awsRequest = proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { S3: FakeS3 },
     });
 
@@ -271,7 +271,7 @@ describe('#request', () => {
       }
     }
 
-    const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    const awsRequest = proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { S3: FakeS3 },
     });
 
@@ -309,7 +309,7 @@ describe('#request', () => {
       }
     }
 
-    const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    const awsRequest = proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { S3: FakeS3 },
     });
 
@@ -340,7 +340,7 @@ describe('#request', () => {
       }
     }
 
-    const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    const awsRequest = proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { S3: FakeS3 },
     });
 
@@ -368,7 +368,7 @@ describe('#request', () => {
       }
     }
 
-    const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+    const awsRequest = proxyquire('../../../../lib/aws/request', {
       'aws-sdk': { S3: FakeS3 },
     });
 
@@ -398,7 +398,7 @@ describe('#request', () => {
           };
         }
       }
-      const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+      const awsRequest = proxyquire('../../../../lib/aws/request', {
         'aws-sdk': { CloudFormation: FakeCF },
       });
 
@@ -439,7 +439,7 @@ describe('#request', () => {
         }
       }
 
-      const awsRequest = proxyquire('../../../../../../lib/plugins/aws/utils/request', {
+      const awsRequest = proxyquire('../../../../lib/aws/request', {
         'aws-sdk': { CloudFormation: FakeCF },
       });
 
